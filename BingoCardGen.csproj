@@ -39,6 +39,9 @@
     <Reference Include="NGraphics.Net, Version=1.0.6809.40396, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\NGraphics.0.5.0\lib\net45\NGraphics.Net.dll</HintPath>
     </Reference>
+    <Reference Include="SimplexNoise, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\SimplexNoise.2.0.0\lib\net472\SimplexNoise.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
