@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using System.Xml.XPath;
 using System.IO;
 using NGraphics;
+using SimplexNoise;
+
 //using System.Drawing;
 
 
@@ -275,6 +277,11 @@ namespace BingoCardGen
         }
 
     }
+    
+    
+    
+    
+    
     class BingoCardGen
     {
 
@@ -296,11 +303,48 @@ namespace BingoCardGen
             return carditems;
         }
 
+        static ArrayList CreateRandomCards(int numberOfCards, int numberOfSlots, int randMax = 38)
+        {
+            // Generate a bunch of arrays of random numbers
+            Random rn = new Random();
+
+            // an array of arrays (each array is a card)
+            ArrayList cards = new ArrayList();
+
+            //create 10 cards
+            for (int noCards = 0; noCards <= numberOfCards; noCards++)
+            {
+                //card
+                ArrayList card = new ArrayList();
+
+                // generate 16 numbers (for a card with 16 slots)
+                for (int i = 0; i <= numberOfSlots - 1; i++)
+                {
+
+                    int rInt = rn.Next(0, randMax-1); // we have 38 images so generate a random number between 0 and 37
+
+                    while (card.Contains(rInt))
+                        rInt = rn.Next(0, randMax - 1);
+
+                    card.Add(rInt);
+
+                }
+                //System.Console.WriteLine(rInt);
+
+                cards.Add(card);
+
+            }
+
+            return cards;
+
+        }
         static void Main(string[] args)
         {
 
             ArrayList itemImages = LoadImagesFromDisk();
 
+
+            ArrayList cards = CreateRandomCards(5, 16, 38);
 
 
             BingoCard b = new BingoCard(4,4);
