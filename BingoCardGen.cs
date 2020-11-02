@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Xml.XPath;
 using System.IO;
 using NGraphics;
-using SimplexNoise;
+using System.Globalization;
 
 //using System.Drawing;
 
@@ -228,7 +228,7 @@ namespace BingoCardGen
             int imageHeight = rowHeight - ypadding;
 
             int imagexpos = xpadding / 2;
-            int imageypos = ypadding / 2;
+            int imageypos = (ypadding / 2) - 10; // the -10 is to nugde the image towards the top of box so we can fit text in
 
             //int xoffset = 0 + xpadding / 2;
             //int yoffset = 0 + ypadding / 2;
@@ -237,7 +237,7 @@ namespace BingoCardGen
             // draw the images
             for (int n=0;n<= rows-1;n++) 
             {
-                imageypos = n * rowHeight + (ypadding / 2);
+                imageypos = n * rowHeight + ((ypadding / 2) - 10);
 
                 for (int m=0;m<=columns-1;m++)
                 {
@@ -249,7 +249,7 @@ namespace BingoCardGen
 
                     //System.Console.WriteLine("Height: {0} Width: {1}", img.Size.Height, img.Size.Width);
                     canvas.DrawImage(img, imagexpos, imageypos , imagewidth, imageHeight);
-                    Point pt = new Point(imagexpos, imageypos + imageHeight + 10);
+                    Point pt = new Point(imagexpos, imageypos + imageHeight + 25);
                     canvas.DrawText(cardLabels[n,m], pt, f, b);
 
                 }
@@ -296,7 +296,7 @@ namespace BingoCardGen
                 //System.Console.WriteLine(files[n]);
                 BingoCardItem bci = new BingoCardItem();
                 bci.ImagePath = files[n];
-                bci.Label = files[n].Split('\\')[2].Split('-')[0];
+                bci.Label = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(files[n].Split('\\')[2].Split('-')[0]);
                 carditems.Add(bci);
             }
 
@@ -346,6 +346,8 @@ namespace BingoCardGen
 
             ArrayList cards = CreateRandomCards(5, 16, 38);
 
+            // Need to check that we have no cards the same
+            // Put some blank spaces in the cards
 
             BingoCard b = new BingoCard(4,4);
 
