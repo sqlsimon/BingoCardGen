@@ -1,15 +1,47 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.XPath;
+using System.IO;
 using NGraphics;
 //using System.Drawing;
 
 
 namespace BingoCardGen
 {
+
+    class BingoCardItem
+    {
+        private string imagepath;
+        private string label;
+
+
+        public BingoCardItem()
+        {
+            imagepath = null;
+            label = "empty";
+        }
+
+        public string ImagePath
+        {
+            get { return imagepath; }
+            set {imagepath = value; }
+        }
+
+        public string Label
+        {
+            get { return label; }
+            set { label = value; }
+        }
+
+
+    }
+
 
     class BingoCard
     {
@@ -20,6 +52,8 @@ namespace BingoCardGen
         private int ypadding= 40;
 
         private string[,] cardImages;
+
+        private string[,] cardLabels;
 
         /// ///////////////////////////////////////////////////////////////////////
 
@@ -55,17 +89,67 @@ namespace BingoCardGen
             cardFrameWidth = 3;
 
             cardImages = new string[rows, columns];
+            cardLabels = new string[rows, columns];
 
-            for(int c=0;c<=columns-1;c++)
+            // sort out images
+            for (int c=0;c<=columns-1;c++)
             {
                 for (int r=0;r<=rows-1;r++)
                 {
                     cardImages[r, c] = "Placeholder.png";
                 }
             }
+
+            // sort out labels
+            for (int c = 0; c <= columns - 1; c++)
+            {
+                for (int r = 0; r <= rows - 1; r++)
+                {
+                    cardLabels[r, c] = "LABEL";
+                }
+            }
         }
 
-        public bool LoadCardImage(int row, int column, string filepath)
+        public BingoCard(int cardRows, int cardColumns)
+        {
+            rows = cardRows;
+            columns = cardColumns;
+
+            colWidth = 100;
+            rowHeight = 100;
+
+            cardWidth = colWidth * columns;
+            cardHeight = rowHeight * rows;
+
+            canvasWidth = cardWidth + 10;
+            canvasHeight = cardHeight + 10;
+
+            cardFrameColour = "#0000FF";
+            cardFrameWidth = 3;
+
+            cardImages = new string[rows, columns];
+            cardLabels = new string[rows, columns];
+
+            // sort out images
+            for (int c = 0; c <= columns - 1; c++)
+            {
+                for (int r = 0; r <= rows - 1; r++)
+                {
+                    cardImages[r, c] = "Placeholder.png";
+                }
+            }
+
+            // sort out labels
+            for (int c = 0; c <= columns - 1; c++)
+            {
+                for (int r = 0; r <= rows - 1; r++)
+                {
+                    cardLabels[r, c] = "LABEL";
+                }
+            }
+        }
+
+        public bool LoadCardImage(int row, int column, string filepath,string label = "LABEL")
         {
             bool found = false;
 
@@ -87,8 +171,9 @@ namespace BingoCardGen
                 }
 
                 // if we dont find the image in the card then we can add it.
-                if (!found) { 
+                if (!found) {
                     cardImages[row, column] = filepath;
+                    cardLabels[row, column] = label;
                 }
                 return (!found);
             }
@@ -109,6 +194,11 @@ namespace BingoCardGen
 
             var r = new Rect(1, 1, cardWidth, cardHeight);
             var c = new Color(cardFrameColour);
+            var b = new SolidBrush(Colors.Black);
+            var f = new Font
+            {
+                Size = 20,
+            };
 
             canvas.DrawRectangle(r, c, cardFrameWidth);
 
@@ -141,7 +231,7 @@ namespace BingoCardGen
             //int xoffset = 0 + xpadding / 2;
             //int yoffset = 0 + ypadding / 2;
 
-            var img = Platforms.Current.LoadImage(@"C:\Users\sime\Downloads\christmas-present.png");
+            //var img = Platforms.Current.LoadImage(@"images\presents\blue-present.png");
             // draw the images
             for (int n=0;n<= rows-1;n++) 
             {
@@ -151,12 +241,14 @@ namespace BingoCardGen
                 {
 
                     imagexpos = m * colWidth + (xpadding / 2);
-                    //var imagePath = cardImages[n, m];
-                    //var img = Platforms.Current.LoadImage(imagePath);
+                    var imagePath = cardImages[n, m];
+                    var img = Platforms.Current.LoadImage(imagePath);
 
 
-                    System.Console.WriteLine("Height: {0} Width: {1}", img.Size.Height, img.Size.Width);
-                    canvas.DrawImage(img, imagexpos, imageypos , imagewidth, imagewidth);
+                    //System.Console.WriteLine("Height: {0} Width: {1}", img.Size.Height, img.Size.Width);
+                    canvas.DrawImage(img, imagexpos, imageypos , imagewidth, imageHeight);
+                    Point pt = new Point(imagexpos, imageypos + imageHeight + 10);
+                    canvas.DrawText(cardLabels[n,m], pt, f, b);
 
                 }
             }
@@ -176,7 +268,7 @@ namespace BingoCardGen
                 System.Console.Write("|");
                 for (int c = 0; c <= columns-1; c++)
                 {
-                    System.Console.Write("{0}|",cardImages[r, c]); 
+                    System.Console.Write("{0} [{1}]|",cardImages[r, c],cardLabels[r,c]); 
                 }
                 System.Console.WriteLine("");
             }
@@ -185,26 +277,56 @@ namespace BingoCardGen
     }
     class BingoCardGen
     {
+
+        static ArrayList LoadImagesFromDisk()
+        {
+            ArrayList carditems = new ArrayList();
+            string[] files = Directory.GetFiles("images", "*.png", SearchOption.AllDirectories);
+
+            // load in images files 
+            for (int n = 0; n <= files.Length - 1; n++)
+            {
+                //System.Console.WriteLine(files[n]);
+                BingoCardItem bci = new BingoCardItem();
+                bci.ImagePath = files[n];
+                bci.Label = files[n].Split('\\')[2].Split('-')[0];
+                carditems.Add(bci);
+            }
+
+            return carditems;
+        }
+
         static void Main(string[] args)
         {
 
+            ArrayList itemImages = LoadImagesFromDisk();
 
-            
 
-            BingoCard b = new BingoCard();
-            //b.Dump();
 
-            System.Console.WriteLine(b.LoadCardImage(10, 3,"sausage.png"));
-            System.Console.WriteLine(b.LoadCardImage(2, 4,"beans.png"));
-            System.Console.WriteLine(b.LoadCardImage(3,2, "sausage.png"));
+            BingoCard b = new BingoCard(4,4);
+
+            int img = 0;
+            BingoCardItem tbc;
+            for (int r = 0; r <= 4; r++)
+            {
+                for (int c = 0; c <= 4; c++)
+                {
+                    //row , column
+                    tbc = (BingoCardItem)itemImages[img];
+                    b.LoadCardImage(r, c, tbc.ImagePath, tbc.Label);
+                    img++;
+                }
+            }
+
 
             b.Dump();
+
             b.drawCard();
             IImageCanvas bc = b.drawCard();
             bc.GetImage().SaveAsPng("object.png");
                 
             
-            System.Console.ReadLine();
+            System.Console.Read();
 
 
         }
