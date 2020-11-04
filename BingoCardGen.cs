@@ -11,6 +11,7 @@ using System.IO;
 using NGraphics;
 using System.Globalization;
 using System.Data;
+using Fclp;  // fluent command line parser
 
 //using System.Drawing;
 
@@ -301,10 +302,10 @@ namespace BingoCardGen
     class BingoCardGen
     {
 
-        static ArrayList LoadImagesFromDisk()
+        static ArrayList LoadImagesFromDisk(string imageSourcePath)
         {
             ArrayList carditems = new ArrayList();
-            string[] files = Directory.GetFiles("images", "*.png", SearchOption.AllDirectories);
+            string[] files = Directory.GetFiles(imageSourcePath, "*.png", SearchOption.AllDirectories);
 
             // load in images files 
             for (int n = 0; n <= files.Length - 1; n++)
@@ -382,41 +383,76 @@ namespace BingoCardGen
         static void Main(string[] args)
         {
 
+            var p = new FluentCommandLineParser<ApplicationArguments>();
 
-            // Load the images from disk into an Array of BingoCardItems
-            // A BingoCardItem has a path to an image and a label. The 
-            // image filename has the assumed format "<colourname>-<somestring>,png"
-            // The Load images function splits the filename and uses the colourname
-            // part as the label.
-            ArrayList itemImages = LoadImagesFromDisk();
+            p.Setup(arg => arg.Rows)
+             .As('r', "rows")
+             .SetDefault(8); 
 
+            p.Setup(arg => arg.Columns)
+             .As('c', "columns")
+             .SetDefault(4);
 
-            // The createRandomCards function returns an array of arrays. 
-            // Each array represents a bingo card and 16 random numbers 
-            // between 0 and a max value (the max value being the last parameter 
-            // of the function)
-            ArrayList cards = CreateRandomCards(5, 16, 4, 38);
+            p.Setup(arg => arg.EmptySlots)
+             .As('e', "emptyslots")
+             .SetDefault(4);
 
-            // TODO Need to check that we have no cards the same
-            // TODO Put some blank spaces in the cards [partially complete]
-            // TODO Check that we have the required number of spaces on each card
+            p.Setup(arg => arg.Cards)
+             .As('n', "number-of-cards")
+             .Required();
 
-            bool CardsValidated = ValidateCards(cards);
+            p.Setup(arg => arg.ImageRootPath)
+             .As('i', "image-root-path")
+             .SetDefault("images");
 
+            p.Setup(arg => arg.OutputPath)
+             .As('o', "output-path")
+             .SetDefault("output");
 
-            // If the cards are validated proceed to creating the graphical 
-            // representations of the cards with the images
-            if (CardsValidated)
+            var result = p.Parse(args);
+
+            if (!result.HasErrors)
             {
-                // itemimages is an array of BingoCardItem objects (pictures / labels)
-                // cards is an array of arrays of ints representing the bingo cards
 
-                BuildCardImages(4,4,itemImages, cards);
+
+                // Load the images from disk into an Array of BingoCardItems
+                // A BingoCardItem has a path to an image and a label. The 
+                // image filename has the assumed format "<colourname>-<somestring>,png"
+                // The Load images function splits the filename and uses the colourname
+                // part as the label.
+                ArrayList itemImages = LoadImagesFromDisk(p.Object.ImageRootPath);
+
+
+                // The createRandomCards function returns an array of arrays. 
+                // Each array represents a bingo card and 16 random numbers 
+                // between 0 and a max value (the max value being the last parameter 
+                // of the function)
+                ArrayList cards = CreateRandomCards(p.Object.Cards, (p.Object.Rows * p.Object.Columns), p.Object.EmptySlots, itemImages.Count);
+
+                // TODO Need to check that we have no cards the same
+                // TODO Put some blank spaces in the cards [partially complete]
+                // TODO Check that we have the required number of spaces on each card
+
+                bool CardsValidated = ValidateCards(cards);
+
+
+                // If the cards are validated proceed to creating the graphical 
+                // representations of the cards with the images
+                if (CardsValidated)
+                {
+                    // itemimages is an array of BingoCardItem objects (pictures / labels)
+                    // cards is an array of arrays of ints representing the bingo cards
+
+                    BuildCardImages(p.Object.Rows, p.Object.Columns, itemImages, cards);
+                }
+
+                System.Console.Read();
+
             }
-
-            System.Console.Read();
-
-
+            else
+            {
+                System.Console.WriteLine("Error processing command line options.");
+            }
         }
 
         private static void BuildCardImages(int rows, int columns, ArrayList itemImages, ArrayList cards)
