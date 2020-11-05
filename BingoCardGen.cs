@@ -91,7 +91,7 @@ namespace BingoCardGen
             canvasWidth = cardWidth + 10;
             canvasHeight = cardHeight + 10;
 
-            cardFrameColour = "#0000FF";
+            cardFrameColour = "#FF0000";
             cardFrameWidth = 3;
 
             cardImages = new string[rows, columns];
@@ -130,7 +130,7 @@ namespace BingoCardGen
             canvasWidth = cardWidth + 10;
             canvasHeight = cardHeight + 10;
 
-            cardFrameColour = "#0000FF";
+            cardFrameColour = "#FF0000";
             cardFrameWidth = 3;
 
             cardImages = new string[rows, columns];
@@ -387,17 +387,66 @@ namespace BingoCardGen
                     ArrayList left = (ArrayList)cards[a];
                     ArrayList right = (ArrayList)cards[b];
 
-                    left.Sort();
-                    right.Sort();
+                    ArrayList left_c = (ArrayList)left.Clone();
+                    ArrayList right_c = (ArrayList)right.Clone();
+
+                    left_c.Sort();
+                    right_c.Sort();
 
                     Log.Information("Comparing Cards: {0}, {1},", a, b);
 
-                    if (left == right) 
+                    if (AreEqual(left_c, right_c))
+                    {
+                        Log.Information("Cards are the same");
+                        Log.Information("Left: [{0}]",DumpCard(left_c));
+                        Log.Information("Rght: [{0}]", DumpCard(right_c));
+
                         return false;
+                    }
+                    else
+                    {
+                        Log.Information("Cards are different");
+                        Log.Information("Left: [{0}]", DumpCard(left_c));
+                        Log.Information("Right: [{0}]", DumpCard(right_c));
+                    }
+                        
                 }
             }
             return true;
         }
+
+        static bool AreEqual(ArrayList a, ArrayList b)
+        {
+            if (a.Count == b.Count)
+            {
+                for (int i = 0; i <= a.Count - 1; i++)
+                {
+                    if ((int)a[i] != (int)b[i])
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            else
+            {
+                System.Console.WriteLine("Arrays are of different sizes");
+                return false;
+            }
+        }
+
+        static string DumpCard(ArrayList a)
+        {
+            StringBuilder s = new StringBuilder();
+
+            for (int i=0;i <= a.Count-1; i++)
+            {
+                s.Append(a[i].ToString());
+                if (i < a.Count - 1) s.Append(",");
+            }
+            return s.ToString();
+        }
+
 
         static void Main(string[] args)
         {
@@ -476,7 +525,7 @@ namespace BingoCardGen
 
 
                     Log.Information("Generatign Bingo cards");
-                    BuildCardImages(p.Object.Rows, p.Object.Columns, itemImages, cards);
+                    BuildCardImages(p.Object.Columns, p.Object.Rows, itemImages, cards);
                 }
 
                 System.Console.Read();
@@ -508,7 +557,7 @@ namespace BingoCardGen
                     for (int c = 0; c <= columns-1; c++)
                     {
 
-                        System.Console.WriteLine("{0} {1} {2}", counter, r, c);
+                        System.Console.WriteLine("Slot:{0} Row:{1} Column:{2}", counter, r, c);
                        
                         // if the current number is a -1 this means render a blank space
                         // otherwise show the image from the itemImages array
