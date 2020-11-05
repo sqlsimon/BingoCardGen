@@ -12,6 +12,8 @@ using NGraphics;
 using System.Globalization;
 using System.Data;
 using Fclp;  // fluent command line parser
+using Serilog;
+using Serilog.Sinks.SystemConsole;
 
 //using System.Drawing;
 
@@ -288,13 +290,13 @@ namespace BingoCardGen
     
     public class ApplicationArguments
     {
-        public int Rows;        // number of rows on each card
-        public int Columns;     // number of columns on each card
-        public int EmptySlots;  // empty boxes per card
-        public int Cards;       // number of cards to generate
+        public int Rows { get; set; }        // number of rows on each card
+        public int Columns { get; set; }    // number of columns on each card
+        public int EmptySlots { get; set; }  // empty boxes per card
+        public int Cards { get; set; }       // number of cards to generate
 
-        public string OutputPath;       //path to output card images to 
-        public string ImageRootPath;    //root path to images to use on bingo cards
+        public string OutputPath { get; set; }       //path to output card images to 
+        public string ImageRootPath { get; set; }    //root path to images to use on bingo cards
     }
     
     
@@ -377,11 +379,31 @@ namespace BingoCardGen
         
         static bool ValidateCards(ArrayList cards)
         {
+            for (int a = 0; a <= cards.Count-1; a++)
+            {
+                
+                for (int b = a+1; b <= cards.Count - 1; b++)
+                {
+                    ArrayList left = (ArrayList)cards[a];
+                    ArrayList right = (ArrayList)cards[b];
+
+                    left.Sort();
+                    right.Sort();
+
+                    Log.Information("Comparing Cards: {0}, {1},", a, b);
+
+                    if (left == right) 
+                        return false;
+                }
+            }
             return true;
         }
 
         static void Main(string[] args)
         {
+            Log.Logger = new LoggerConfiguration()
+            .WriteTo.Console()
+            .CreateLogger();
 
             var p = new FluentCommandLineParser<ApplicationArguments>();
 
@@ -395,7 +417,7 @@ namespace BingoCardGen
 
             p.Setup(arg => arg.EmptySlots)
              .As('e', "emptyslots")
-             .SetDefault(4);
+              .SetDefault(4);
 
             p.Setup(arg => arg.Cards)
              .As('n', "number-of-cards")
@@ -411,8 +433,14 @@ namespace BingoCardGen
 
             var result = p.Parse(args);
 
+            Log.Information("Parsing command line args");
+
             if (!result.HasErrors)
             {
+
+                Log.Information("Command line args OK");
+
+                Log.Information("Reading images from: {0}", p.Object.ImageRootPath);
 
 
                 // Load the images from disk into an Array of BingoCardItems
@@ -423,6 +451,7 @@ namespace BingoCardGen
                 ArrayList itemImages = LoadImagesFromDisk(p.Object.ImageRootPath);
 
 
+                Log.Information("Creating {0} random number arrays with {1} rows and {2} columns.", p.Object.Cards, p.Object.Rows, p.Object.Columns);
                 // The createRandomCards function returns an array of arrays. 
                 // Each array represents a bingo card and 16 random numbers 
                 // between 0 and a max value (the max value being the last parameter 
@@ -433,16 +462,20 @@ namespace BingoCardGen
                 // TODO Put some blank spaces in the cards [partially complete]
                 // TODO Check that we have the required number of spaces on each card
 
+                Log.Information("Validating random number arrays"); 
                 bool CardsValidated = ValidateCards(cards);
-
+                
 
                 // If the cards are validated proceed to creating the graphical 
                 // representations of the cards with the images
                 if (CardsValidated)
                 {
+                    Log.Information("Bingo cards successfully validated ");
                     // itemimages is an array of BingoCardItem objects (pictures / labels)
                     // cards is an array of arrays of ints representing the bingo cards
 
+
+                    Log.Information("Generatign Bingo cards");
                     BuildCardImages(p.Object.Rows, p.Object.Columns, itemImages, cards);
                 }
 
@@ -451,7 +484,7 @@ namespace BingoCardGen
             }
             else
             {
-                System.Console.WriteLine("Error processing command line options.");
+                Log.Error("Error processing command line options.");
             }
         }
 
