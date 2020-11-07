@@ -80,118 +80,121 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <Content Include="images\baubles\blue-bauble.png">
+    <Content Include="images\card-items\baubles\blue-bauble.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="images\baubles\green-bauble.png">
+    <Content Include="images\card-items\baubles\green-bauble.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="images\baubles\orange-bauble.png">
+    <Content Include="images\card-items\baubles\orange-bauble.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="images\baubles\purple-bauble.png">
+    <Content Include="images\card-items\baubles\purple-bauble.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="images\baubles\red-bauble.png">
+    <Content Include="images\card-items\baubles\red-bauble.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="images\bells\blue-bells.png">
+    <Content Include="images\card-items\bells\blue-bells.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="images\bells\cyan-bells.png">
+    <Content Include="images\card-items\bells\cyan-bells.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="images\bells\green-bells.png">
+    <Content Include="images\card-items\bells\green-bells.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="images\bells\pink-bells.png">
+    <Content Include="images\card-items\bells\pink-bells.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="images\bells\purple-bells.png">
+    <Content Include="images\card-items\bells\purple-bells.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="images\bells\red-bells.png">
+    <Content Include="images\card-items\bells\red-bells.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="images\bells\yellow-bells.png">
+    <Content Include="images\card-items\bells\yellow-bells.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="images\candy-canes\blue-candy-cane.png">
+    <Content Include="images\card-items\candy-canes\blue-candy-cane.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="images\candy-canes\cyan-candy-cane.png">
+    <Content Include="images\card-items\candy-canes\cyan-candy-cane.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="images\candy-canes\green-candy-cane.png">
+    <Content Include="images\card-items\candy-canes\green-candy-cane.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="images\candy-canes\pink-candy-cane.png">
+    <Content Include="images\card-items\candy-canes\pink-candy-cane.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="images\candy-canes\purple-candy-cane.png">
+    <Content Include="images\card-items\candy-canes\purple-candy-cane.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="images\candy-canes\red-candy-cane.png">
+    <Content Include="images\card-items\candy-canes\red-candy-cane.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="images\candy-canes\yellow-candy-cane.png">
+    <Content Include="images\card-items\candy-canes\yellow-candy-cane.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="images\empty.png">
+    <Content Include="images\card-items\empty.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="images\presents\blue-present.png">
+    <Content Include="images\card-items\presents\blue-present.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="images\presents\cyan-present.png">
+    <Content Include="images\card-items\presents\cyan-present.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="images\presents\pink-present.png">
+    <Content Include="images\card-items\presents\pink-present.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="images\presents\purple-present.png">
+    <Content Include="images\card-items\presents\purple-present.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="images\presents\red-present.png">
+    <Content Include="images\card-items\presents\red-present.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="images\presents\yellow-present.png">
+    <Content Include="images\card-items\presents\yellow-present.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="images\santa-hats\blue--santa-hat.png">
+    <Content Include="images\card-items\santa-hats\blue--santa-hat.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="images\santa-hats\cyan-santa-hat.png">
+    <Content Include="images\card-items\santa-hats\cyan-santa-hat.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="images\santa-hats\green-santa-hat.png">
+    <Content Include="images\card-items\santa-hats\green-santa-hat.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="images\santa-hats\pink-santa-hat.png">
+    <Content Include="images\card-items\santa-hats\pink-santa-hat.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="images\santa-hats\purple-santa-hat.png">
+    <Content Include="images\card-items\santa-hats\purple-santa-hat.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="images\santa-hats\yellow-santa-hat.png">
+    <Content Include="images\card-items\santa-hats\yellow-santa-hat.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="images\trees\blue-tree.png">
+    <Content Include="images\card-items\trees\blue-tree.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="images\trees\cyan-tree.png">
+    <Content Include="images\card-items\trees\cyan-tree.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="images\trees\green-tree.png">
+    <Content Include="images\card-items\trees\green-tree.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="images\trees\pink-tree.png">
+    <Content Include="images\card-items\trees\pink-tree.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="images\trees\red-tree.png">
+    <Content Include="images\card-items\trees\red-tree.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="images\trees\yellow-tree.png">
+    <Content Include="images\card-items\trees\yellow-tree.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="images\holly.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
