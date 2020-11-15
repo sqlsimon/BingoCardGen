@@ -68,6 +68,9 @@ namespace BingoCardGen
          private int colWidth;
          private int rowHeight;
 
+        private int cardXorigin = 50;
+        private int cardYorigin = 50;
+
         private int cardWidth;
         private int cardHeight;
         private string cardFrameColour;
@@ -75,6 +78,8 @@ namespace BingoCardGen
 
         private int canvasWidth;
         private int canvasHeight;
+
+ 
 
         /// ///////////////////////////////////////////////////////////////////////
         
@@ -85,6 +90,7 @@ namespace BingoCardGen
 
             colWidth = 100;
             rowHeight = 100;
+
 
             cardWidth = colWidth * columns;
             cardHeight = rowHeight * rows;
@@ -125,14 +131,17 @@ namespace BingoCardGen
             colWidth = 100;
             rowHeight = 100;
 
+
             cardWidth = colWidth * columns;
             cardHeight = rowHeight * rows;
 
-            canvasWidth = cardWidth + 10;
-            canvasHeight = cardHeight + 10;
+            canvasWidth = cardWidth + 10+cardXorigin;
+            canvasHeight = cardHeight + 10+cardYorigin;
 
             cardFrameColour = "#FF0000";
             cardFrameWidth = 3;
+
+   
 
             cardImages = new string[rows, columns];
             cardLabels = new string[rows, columns];
@@ -199,7 +208,7 @@ namespace BingoCardGen
             canvas.SaveState();
 
 
-            var r = new Rect(1, 1, cardWidth, cardHeight);
+            var r = new Rect(cardXorigin, cardYorigin, cardWidth, cardHeight);
             var c = new Color(cardFrameColour);
             var b = new SolidBrush(Colors.Black);
             var f = new Font
@@ -207,24 +216,28 @@ namespace BingoCardGen
                 Size = 20,
             };
 
+            // decorate the card with some holly
+            var holly = Platforms.Current.LoadImage(@"images\holly.png");
+            canvas.DrawImage(holly, 1, 1, 75    , 75);
+
             canvas.DrawRectangle(r, c, cardFrameWidth);
 
-            var colrect = new Rect(1, 1, colWidth, cardHeight);
+            var colrect = new Rect(cardXorigin, cardYorigin, colWidth, cardHeight);
 
 
             // draw the columns
-            for (int n = 1; n <= canvasWidth; n = n + colWidth)
+            for (int n = cardXorigin; n <= canvasWidth; n =  n + colWidth)
             {
-                var p1 = new Point(n, 1);
-                var p2 = new Point(n, cardHeight);
+                var p1 = new Point(n, cardYorigin);
+                var p2 = new Point(n, cardHeight+cardYorigin);
                 canvas.DrawLine(p1, p2, c, cardFrameWidth);
             }
 
             // draw the rows
-            for (int m = 1; m <= canvasHeight; m = m + rowHeight)
+            for (int m = cardYorigin; m <= canvasHeight; m = m + rowHeight)
             {
-                var p1 = new Point(1, m);
-                var p2 = new Point(cardWidth, m);
+                var p1 = new Point(cardXorigin, m);
+                var p2 = new Point(cardWidth+cardXorigin, m);
                 canvas.DrawLine(p1, p2, c, cardFrameWidth);
             }
 
@@ -238,8 +251,6 @@ namespace BingoCardGen
             //int xoffset = 0 + xpadding / 2;
             //int yoffset = 0 + ypadding / 2;
 
-            //var img = Platforms.Current.LoadImage(@"images\presents\blue-present.png");
-            // draw the images
 
             var img = Platforms.Current.LoadImage(@"images\card-items\empty.png");
 
@@ -258,8 +269,8 @@ namespace BingoCardGen
 
 
                     //System.Console.WriteLine("Height: {0} Width: {1}", img.Size.Height, img.Size.Width);
-                    canvas.DrawImage(img, imagexpos, imageypos , imagewidth, imageHeight);
-                    Point pt = new Point(imagexpos, imageypos + imageHeight + 25);
+                    canvas.DrawImage(img, imagexpos+cardXorigin, imageypos + cardYorigin, imagewidth, imageHeight);
+                    Point pt = new Point(imagexpos + cardXorigin, imageypos + cardYorigin + imageHeight + 25);
                     canvas.DrawText(cardLabels[n,m], pt, f, b);
 
                 }
