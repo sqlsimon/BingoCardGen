@@ -69,7 +69,7 @@ namespace BingoCardGen
          private int rowHeight;
 
         private int cardXorigin = 50;
-        private int cardYorigin = 50;
+        private int cardYorigin = 75;
 
         private int cardWidth;
         private int cardHeight;
@@ -218,7 +218,10 @@ namespace BingoCardGen
 
             // decorate the card with some holly
             var holly = Platforms.Current.LoadImage(@"images\holly.png");
-            canvas.DrawImage(holly, 1, 1, 75    , 75);
+            var snowman = Platforms.Current.LoadImage(@"images\snowman.png");
+            
+            canvas.DrawImage(holly, 1, 25, 75, 75);
+            canvas.DrawImage(snowman,500, 1, 75, 75);
 
             canvas.DrawRectangle(r, c, cardFrameWidth);
 
