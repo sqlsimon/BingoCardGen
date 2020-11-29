@@ -297,7 +297,7 @@ namespace BingoCardGen
                 System.Console.Write("|");
                 for (int c = 0; c <= columns-1; c++)
                 {
-                    System.Console.Write("{0} [{1}]|",cardImages[r, c],cardLabels[r,c]); 
+                    System.Console.Write("{0} [{1}]|",cardImages[r, c].Replace(@"images\card-items\",""),cardLabels[r,c]); 
                 }
                 System.Console.WriteLine("");
             }
@@ -343,7 +343,7 @@ namespace BingoCardGen
             return carditems;
         }
 
-        static ArrayList CreateRandomCards(int numberOfCards, int numberOfSlots, int blankSlots = 4, int randMax = 38)
+        static ArrayList CreateRandomCards(int numberOfCards, int numberOfSlots, int rowsPerCard, int colsPerCard, int blankSlotsPerRow = 4, int randMax = 38 )
         {
             // Generate a bunch of arrays of random numbers
             Random rn = new Random();
@@ -370,22 +370,41 @@ namespace BingoCardGen
                     card.Add(rInt);
 
                 }
-                //System.Console.WriteLine(rInt);
 
-                //blank out some of the slots 
-                for (int i = 0; i <= blankSlots; i++)
+
+                //new blanking slots rules x number of blank slots per row
+                // loop over each row of the card and for each row generate
+                // the required number of blanks
+                int rnstart = 0;
+                for (int p = 0; p <= rowsPerCard-1; p++)
                 {
 
-                    int bInt = bn.Next(0, numberOfSlots - 1); 
+                    int Timeout = 0;
                     
-                    while (card.Contains(bInt))
-                        bInt = bn.Next(0, numberOfSlots - 1);
 
-                    card[bInt] = -1;
+                    // we want 3 blanks per row
+                    for (int rw = 0; rw <= blankSlotsPerRow - 1; rw++)
+                    {
+                        // generate a random number between 
+                        int bInt = bn.Next(rnstart, rnstart + (colsPerCard - 1));
 
-                    //System.Console.WriteLine(i);
 
+                        while ((int)card[bInt] == -1 && Timeout <= 10)
+                        {
+                            bInt = bn.Next(rnstart, rnstart + (colsPerCard - 1));
+                            Timeout++;
+                        }
+                        
+                        card[bInt] = -1;
+
+                        
+                    }
+                    rnstart = rnstart + colsPerCard;
+                    
                 }
+
+                // dump out a formatted card so we can check the blanks
+                System.Console.WriteLine( DumpFormattedCard(card,colsPerCard) );
 
                 cards.Add(card);
 
@@ -543,11 +562,40 @@ namespace BingoCardGen
         {
             StringBuilder s = new StringBuilder();
 
+
             for (int i=0;i <= a.Count-1; i++)
             {
                 s.Append(a[i].ToString());
                 if (i < a.Count - 1) s.Append(",");
             }
+
+
+            return s.ToString();
+        }
+
+        public static string Repeat(string value, int count)
+        {
+            return new StringBuilder(value.Length * count).Insert(0, value, count).ToString();
+        }
+
+        static string DumpFormattedCard(ArrayList a, int columns)
+        {
+            StringBuilder s = new StringBuilder();
+
+
+            s.Append(Repeat("=",columns*2+9));
+ 
+
+         
+            for (int i = 0; i <= a.Count - 1; i++)
+            {
+                if (i % columns == 0) s.Append("\n|");
+                s.AppendFormat("{0,2:D2}", a[i].ToString());
+                if (i < a.Count - 1) s.Append("|");
+            }
+            s.Append("|\n");
+            s.Append(Repeat("=", columns * 2 + 9));
+
             return s.ToString();
         }
 
@@ -564,6 +612,8 @@ namespace BingoCardGen
 
                 ArrayList currentcard = (ArrayList)cards[card]; // get the array of numbers we use to pick images
 
+                //System.Console.WriteLine(DumpFormattedCard(currentcard,columns));
+
                 int counter = 0;
                 BingoCardItem carditem;
 
@@ -572,7 +622,7 @@ namespace BingoCardGen
                     for (int c = 0; c <= columns - 1; c++)
                     {
 
-                        System.Console.WriteLine("Slot:{0} Row:{1} Column:{2}", counter, r, c);
+                        
 
                         // if the current number is a -1 this means render a blank space
                         // otherwise show the image from the itemImages array
@@ -585,9 +635,13 @@ namespace BingoCardGen
                         {
                             bingocard.LoadCardImage(r, c, @"images\card-items\empty.png", "");
                         }
+
+                        // put some code in here that dumps out the bingocard.object
+                        //System.Console.WriteLine("Slot:{0} Row:{1} Column:{2} ", counter, r, c);
+
+                        //bingocard.Dump();
+
                         counter++;
-
-
                     }
                 }
                 bingocard.drawCard();
@@ -689,6 +743,9 @@ namespace BingoCardGen
 
         static void Main(string[] args)
         {
+            string pdfOutputDir = "";
+            string pngOutputDir = "";
+
             Log.Logger = new LoggerConfiguration()
             .WriteTo.Console()
             .CreateLogger();
@@ -697,11 +754,11 @@ namespace BingoCardGen
 
             p.Setup(arg => arg.Rows)
              .As('r', "rows")
-             .SetDefault(8); 
+             .SetDefault(3); 
 
             p.Setup(arg => arg.Columns)
              .As('c', "columns")
-             .SetDefault(4);
+             .SetDefault(8);
 
             p.Setup(arg => arg.EmptySlots)
              .As('e', "emptyslots")
@@ -726,6 +783,30 @@ namespace BingoCardGen
             if (!result.HasErrors)
             {
 
+                if (p.Object.OutputPath == "output")
+                {
+                     pngOutputDir = @"C:\Users\sime\source\repos\BingoCardGen\bin\Debug\output\images";
+                     pdfOutputDir = @"C:\Users\sime\source\repos\BingoCardGen\bin\Debug\output\pdfs";
+                }
+                else
+                {
+                    pngOutputDir = (string)p.Object.OutputPath.Concat("images");
+                    pdfOutputDir = (string)p.Object.OutputPath.Concat("pdfs");
+                }
+
+
+                // Clear down the output Path 
+                foreach (string f in Directory.EnumerateFiles(pngOutputDir, "*.png"))
+                {
+                    File.Delete(f);
+                }
+
+                foreach (string f in Directory.EnumerateFiles(pdfOutputDir, "*.pdf"))
+                {
+                    File.Delete(f);
+                }
+
+
                 Log.Information("Command line args OK");
 
                 Log.Information("Reading images from: {0}", p.Object.ImageRootPath);
@@ -744,7 +825,7 @@ namespace BingoCardGen
                 // Each array represents a bingo card and 16 random numbers 
                 // between 0 and a max value (the max value being the last parameter 
                 // of the function)
-                ArrayList cards = CreateRandomCards(p.Object.Cards, (p.Object.Rows * p.Object.Columns), p.Object.EmptySlots, itemImages.Count);
+                ArrayList cards = CreateRandomCards(p.Object.Cards, (p.Object.Rows * p.Object.Columns), p.Object.Rows, p.Object.Columns, p.Object.EmptySlots, itemImages.Count);
 
                 // TODO Need to check that we have no cards the same
                 // TODO Put some blank spaces in the cards [partially complete]
@@ -754,12 +835,12 @@ namespace BingoCardGen
                 bool CardsValidated = ValidateCards(cards);
                 
                 // Check for incorrect number of empty slots and correct
-                CheckForEmptySlots(cards, p.Object.EmptySlots, 16,38);
+                //CheckForEmptySlots(cards, p.Object.EmptySlots, 16,38);
                 System.Console.WriteLine("===========================================");
                 
                 // Peform check for empty slots, we should now have correct
                 // number of empty slots on each card
-                CheckForEmptySlots(cards, p.Object.EmptySlots, 16, 38);
+                //CheckForEmptySlots(cards, p.Object.EmptySlots, 16, 38);
 
                 // If the cards are validated proceed to creating the graphical 
                 // representations of the cards with the images
